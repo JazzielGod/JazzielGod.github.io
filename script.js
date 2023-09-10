@@ -20,13 +20,13 @@ serpiente.src = "serpiente2.png";
 var paredes = [];
 var walls = [];
 var dir = 0;
-var speed =1;
+var speed =5;
 var score = 0;
 var direccion = randomInteger(3, 4);
 
 var h = 50;
 var w = 300;
-var xRandom = randomInteger(85, 500);
+var x = 300;
 var musicaPause = false;
 var pause = false;
 var gioPause = false;
@@ -59,11 +59,12 @@ class Cuadrado {
 
 const player = new Cuadrado(85, 465, 30, 30, "black");
 const target = new Cuadrado(randomInteger(85, 400), randomInteger(20, 400), 20, 20, "black");
+const targetTwo = new Cuadrado(randomInteger(85, 400), randomInteger(20, 400), 20, 20, "black");
 
 //obstaculos-movimiento
-walls.push(new Cuadrado(xRandom, 50, w, h, "gray"));
-walls.push(new Cuadrado(xRandom, 200, w, h, "gray"));
-walls.push(new Cuadrado(xRandom, 350, w, h, "gray"));
+walls.push(new Cuadrado(x, 50, w, h, "gray"));
+walls.push(new Cuadrado(x, 200, w, h, "gray"));
+walls.push(new Cuadrado(x, 350, w, h, "gray"));
 
 //paredes
 paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(255, 241, 125,.5)"));
@@ -74,7 +75,35 @@ paredes.push(new Cuadrado(0, 495, 595, 10, "black"));
 //paredes-obstaculos-laberinto
 paredes.push(new Cuadrado(80, 455, 300, 10, "black"));
 paredes.push(new Cuadrado(400, 400, 300, 10, "black"));
+paredes.push(new Cuadrado(400, 345, 300, 10, "black"));
+paredes.push(new Cuadrado(400, 250, 300, 10, "black"));
+paredes.push(new Cuadrado(400, 190, 300, 10, "black"));
+
+
 paredes.push(new Cuadrado(80, 10, 2, 500, "black"));
+paredes.push(new Cuadrado(115, 400, 248, 10, "black"));
+paredes.push(new Cuadrado(115, 45, 248, 10, "black"));
+paredes.push(new Cuadrado(115, 45, 10, 319, "black"));
+paredes.push(new Cuadrado(158, 90, 10, 270, "black"));
+paredes.push(new Cuadrado(210, 140, 10, 270, "black"));
+paredes.push(new Cuadrado(410, 10, 10, 40, "black"));
+paredes.push(new Cuadrado(460, 10, 10, 40, "black"));
+paredes.push(new Cuadrado(460, 102, 10, 97, "black"));
+paredes.push(new Cuadrado(320, 102, 10, 97, "black"));
+
+
+
+
+function toggleMusica() {
+    if (!musicaPause) {
+        if (soundrack.paused) {
+            soundrack.play();
+        } else {
+            soundrack.pause();
+        }
+        musicaPause = true; // Marcar la tecla como presionada
+    }
+}
 
 
 
@@ -90,8 +119,10 @@ window.requestAnimationFrame = (function () {
 //teclado
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
+        musicaPause = false;
         pause = !pause;
     } else if (!pause) {
+        toggleMusica();
         if (e.keyCode == 87) {
             dir = 1;
         }
@@ -251,8 +282,7 @@ function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
     if (gameOver) {
-        soundrack.play();
-
+        toggleMusica();
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
         ctx.fillText("SCORE: ", 5, 50);
@@ -286,7 +316,7 @@ function paint() {
         ctx.drawImage(heavyMachine, target.x, target.y, 20, 20);
 
         for (var i = walls.length - 1; i >= 0; i--) {
-            //walls[i].paint(ctx);
+            walls[i].paint(ctx);
             ctx.drawImage(serpiente, walls[i].x, walls[i].y, w, h);
         }
 
@@ -295,7 +325,6 @@ function paint() {
         }
 
         if (pause) {
-            soundrack.pause();
             ctx.font = "20px Georgia";
             ctx.fillStyle = "rgba(0,0,0)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -313,7 +342,6 @@ function paint() {
 
         }
     } else {
-        soundrack.pause();
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
