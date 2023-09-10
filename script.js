@@ -286,7 +286,7 @@ function paint() {
         ctx.drawImage(heavyMachine, target.x, target.y, 20, 20);
 
         for (var i = walls.length - 1; i >= 0; i--) {
-            walls[i].paint(ctx);
+            //walls[i].paint(ctx);
             ctx.drawImage(serpiente, walls[i].x, walls[i].y, w, h);
         }
 
