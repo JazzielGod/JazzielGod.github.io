@@ -24,6 +24,13 @@ missionFailedAudio.src = "missionFailed.mp3";
 let missionComplete = new Image();
 missionComplete.src = "missionComplete.png";
 
+let cronometro;
+let segundos = 0;
+let minutos = 0;
+var tiempoTotal = 0; 
+var tiempoRestante = tiempoTotal; 
+var intervalo = 1000; 
+
 var p = true; //se usa para una condicional, evitar que se repita cancion
 var a = true; //se usa para una condicional, evitar que se repita cancion
 var missionFailed = false;
@@ -322,7 +329,10 @@ function paint() {
         ctx.fillStyle = "black";
         ctx.fillText("VIDAS: ", 5, 100);
         ctx.fillText(vidas, 30, 120);
-
+        
+        ctx.fillText("Tiempo:", 5, 160);
+        ctx.fillText(tiempoRestante, 30, 190);
+        
         ctx.font = "15px Georgia";
         ctx.fillStyle = "black";
         ctx.fillText("PAUSAR", 10, 450);
@@ -451,5 +461,25 @@ function reiniciarJuego() {
     mission = false;
     guardarEstadoJuego();
 }
+
+function dibujarTiempo() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpia el canvas
+
+    
+  }
+
+function actualizarTemporizador() {
+    tiempoRestante++;
+
+    if (tiempoRestante >= 0) {
+      dibujarTiempo();
+    } else {
+      clearInterval(intervalID); 
+      
+    }
+  }
+  var intervalID = setInterval(actualizarTemporizador, intervalo);
+  dibujarTiempo();
+
 
 update();
