@@ -38,7 +38,7 @@ var mission = false;
 var paredes = [];
 var walls = [];
 var dir = 0;
-var speed =5;
+var speed =4;
 var score = 0;
 var direccion = randomInteger(3, 4);
 
@@ -101,10 +101,10 @@ paredes.push(new Cuadrado(400, 190, 300, 10, "black"));
 
 paredes.push(new Cuadrado(80, 10, 2, 500, "black"));
 paredes.push(new Cuadrado(115, 400, 248, 10, "black"));
-paredes.push(new Cuadrado(115, 45, 248, 10, "black"));
+paredes.push(new Cuadrado(270, 45, 150, 10, "black"));
 paredes.push(new Cuadrado(115, 45, 10, 319, "black"));
 paredes.push(new Cuadrado(158, 90, 10, 270, "black"));
-paredes.push(new Cuadrado(210, 140, 10, 270, "black"));
+paredes.push(new Cuadrado(205, 145, 10, 265, "black"));
 paredes.push(new Cuadrado(410, 10, 10, 40, "black"));
 paredes.push(new Cuadrado(460, 10, 10, 40, "black"));
 paredes.push(new Cuadrado(460, 102, 10, 50, "black"));
@@ -112,7 +112,17 @@ paredes.push(new Cuadrado(460, 102, 150, 10, "black"));
 paredes.push(new Cuadrado(320, 102, 10, 97, "black"));
 paredes.push(new Cuadrado(320, 250, 10, 97, "black"));
 paredes.push(new Cuadrado(260, 300, 290, 10, "black"));
-   
+paredes.push(new Cuadrado(225, 100, 180, 10, "black"));
+paredes.push(new Cuadrado(270, 50, 10, 100, "black"));
+paredes.push(new Cuadrado(155, 45, 70, 10, "black"));
+paredes.push(new Cuadrado(158, 200, 50, 10, "black"));
+paredes.push(new Cuadrado(420, 455, 180, 10, "black"));
+paredes.push(new Cuadrado(80, 250, 45, 10, "black"));
+paredes.push(new Cuadrado(250, 190, 80, 10, "black"));
+paredes.push(new Cuadrado(220, 45, 80, 10, "black"));
+paredes.push(new Cuadrado(210, 250, 70, 10, "black"));
+
+
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -377,6 +387,8 @@ function paint() {
             ctx.fillText(lastScore, 400, 300);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 220, 25);
+            ctx.fillText("Tiempo:", 5, 480);
+            ctx.fillText(tiempoRestante, 90, 480);
             ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
 
         }
