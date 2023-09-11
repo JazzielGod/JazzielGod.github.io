@@ -159,7 +159,7 @@ document.addEventListener("keydown", (e) => {
         }
         if (e.keyCode == 69) {
             if (!reinicioWin) {
-                reiniciarJuego();
+               reiniciarJuego();
             }
         }
     }
@@ -170,8 +170,20 @@ function update() {
     if (!pause) {
         if (dir == 1) {
             if (player.y < 0) {
-                mission = true;
-                player.y = 500;
+                if (score >= scoreTop) {
+                    mission = true;
+                    missionFailed = false;
+                    gameOver = !gameOver;
+                    scoreTop = score;
+                    guardarEstadoJuego();
+                } else {
+                    missionFailed = false;
+                    mission = true;
+                    gameOver = !gameOver;
+                    lastScore = score;
+                    guardarEstadoJuego();
+                }
+                //player.y = 500;
             } else {
                 player.y -= speed;
             }
@@ -221,11 +233,14 @@ function update() {
                 if (vidas == 0) {
                     if (score >= scoreTop) {
                         missionFailed = true;
+                        gameOver = !gameOver;
                         scoreTop = score;
-                        gameOver = !gameOver;
+                        guardarEstadoJuego();
                     } else {
-                        lastScore = score;
+                        missionFailed = true;
                         gameOver = !gameOver;
+                        lastScore = score;
+                        guardarEstadoJuego();
                     }
                 }
             }
@@ -272,13 +287,11 @@ function update() {
         guardarEstadoJuego();
         audioHeavyMachine.play();
         if (score > 50 && !vidasAceptadas) {
-            vidas = 3; 
+            vidas = 1; 
             vidasAceptadas = true;
         }else if(score > 100 && !vidasAceptadas){
             vidas = 3;
             vidasAceptadas = true;
-        }else if(score < 50) {
-            vidasIncrementadas = false;
         }
     }
 
@@ -349,6 +362,24 @@ function paint() {
         for (var i = paredes.length - 1; i >= 0; i--) {
             paredes[i].paint(ctx);
         }
+        if (pause) {
+            ctx.font = "20px Georgia";
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgb(255, 228, 0)";
+            ctx.fillText("P A U S E [ENTER]", 235, 170);
+            ctx.fillText("V I D A S: ", 260, 215);
+            ctx.fillText(vidas, 400, 214);
+            ctx.fillText("S C O R E: ", 260, 260);
+            ctx.fillText(score, 400, 260);
+            ctx.fillText("LAST-SCORE: ", 250, 300);
+            ctx.fillText(lastScore, 400, 300);
+            ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
+            ctx.fillText(scoreTop, 220, 25);
+            ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
+
+        }
+    } 
         if(mission){
             soundrack.pause();
             if(a){
@@ -369,26 +400,9 @@ function paint() {
             ctx.fillText(scoreTop, 210, 25);
             ctx.drawImage(imageGioDerecha, 240, 300, 150, 150);  
             reinicioWin = false;
-            
         }
-        if (pause) {
-            ctx.font = "20px Georgia";
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgb(255, 228, 0)";
-            ctx.fillText("P A U S E [ENTER]", 235, 170);
-            ctx.fillText("V I D A S: ", 260, 215);
-            ctx.fillText(vidas, 400, 214);
-            ctx.fillText("S C O R E: ", 260, 260);
-            ctx.fillText(score, 400, 260);
-            ctx.fillText("LAST-SCORE: ", 250, 300);
-            ctx.fillText(lastScore, 400, 300);
-            ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
-            ctx.fillText(scoreTop, 220, 25);
-            ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
 
-        }
-    } else if(missionFailed){
+        if(missionFailed){
             soundrack.pause();
             if(p){
                 missionFailedAudio.play(); 
@@ -419,6 +433,7 @@ function randomInteger(min, max) {
 function guardarEstadoJuego() {
     const estadoJuego = {
         score: score,
+        scoreTop: scoreTop,
     };
     localStorage.setItem('estadoJuego', JSON.stringify(estadoJuego));
 }
@@ -437,11 +452,13 @@ function reiniciarJuego() {
     vidas = 1;
     player.x = 85;
     player.y = 465;
+    p = true;
+    a= true;
     gameOver = true;
     reinicioWin = true;
     missionFailed = false;
     mission = false;
-    soundrack.play();
+    musicaPauseSoundrack = false;
     guardarEstadoJuego();
 }
 
