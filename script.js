@@ -1,6 +1,7 @@
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
 var soundrack = document.getElementById('soundrack');
+var musicComplete = document.getElementById('musicComplete');
 
 let fondoMap = new Image();
 fondoMap.src = "FondoMapa.jpg";
@@ -16,7 +17,17 @@ let imageGioIzq = new Image();
 imageGioIzq.src = "gioIzquierda.gif";
 let serpiente = new Image();
 serpiente.src = "serpiente2.png";
+let fondoFailed = new Image();
+fondoFailed.src = "Failed.png";
+let missionFailedAudio = new Audio();
+missionFailedAudio.src = "missionFailed.mp3";
+let missionComplete = new Image();
+missionComplete.src = "missionComplete.png";
 
+var p = true; //se usa para una condicional, evitar que se repita cancion
+var a = true; //se usa para una condicional, evitar que se repita cancion
+var missionFailed = false;
+var mission = false;
 var paredes = [];
 var walls = [];
 var dir = 0;
@@ -27,15 +38,16 @@ var direccion = randomInteger(3, 4);
 var h = 50;
 var w = 300;
 var x = 300;
-var musicaPause = false;
 var pause = false;
 var gioPause = false;
-var vidas = 3;
+var vidas = 1;
 var gameOver = true;
 var scoreTop = 0;
 var lastScore = 0;
-var musicaPause = false;
+var musicaPauseSoundrack = false;
 var playerDirection = true;
+var vidasAceptadas = false;
+var reinicioWin = true;
 
 class Cuadrado {
     constructor(x, y, w, h, c) {
@@ -88,25 +100,26 @@ paredes.push(new Cuadrado(158, 90, 10, 270, "black"));
 paredes.push(new Cuadrado(210, 140, 10, 270, "black"));
 paredes.push(new Cuadrado(410, 10, 10, 40, "black"));
 paredes.push(new Cuadrado(460, 10, 10, 40, "black"));
-paredes.push(new Cuadrado(460, 102, 10, 97, "black"));
+paredes.push(new Cuadrado(460, 102, 10, 50, "black"));
+paredes.push(new Cuadrado(460, 102, 150, 10, "black"));
 paredes.push(new Cuadrado(320, 102, 10, 97, "black"));
+paredes.push(new Cuadrado(320, 250, 10, 97, "black"));
+paredes.push(new Cuadrado(260, 300, 290, 10, "black"));
 
 
 
 
-function toggleMusica() {
-    if (!musicaPause) {
+function SoundrackMusic() {
+    if (!musicaPauseSoundrack) {
         if (soundrack.paused) {
             soundrack.play();
         } else {
             soundrack.pause();
         }
-        musicaPause = true; // Marcar la tecla como presionada
+        musicaPauseSoundrack = true;
     }
 }
-
-
-
+   
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -119,10 +132,9 @@ window.requestAnimationFrame = (function () {
 //teclado
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
-        musicaPause = false;
+        musicaPauseSoundrack = false;
         pause = !pause;
     } else if (!pause) {
-        toggleMusica();
         if (e.keyCode == 87) {
             dir = 1;
         }
@@ -145,13 +157,20 @@ document.addEventListener("keydown", (e) => {
                 reiniciarJuego();
             }
         }
+        if (e.keyCode == 69) {
+            if (!reinicioWin) {
+                reiniciarJuego();
+            }
+        }
     }
+    
 })
 
 function update() {
     if (!pause) {
         if (dir == 1) {
             if (player.y < 0) {
+                mission = true;
                 player.y = 500;
             } else {
                 player.y -= speed;
@@ -201,6 +220,7 @@ function update() {
                 }
                 if (vidas == 0) {
                     if (score >= scoreTop) {
+                        missionFailed = true;
                         scoreTop = score;
                         gameOver = !gameOver;
                     } else {
@@ -251,8 +271,14 @@ function update() {
         score += 20;
         guardarEstadoJuego();
         audioHeavyMachine.play();
-        if (score > 50 || score > 100) {
+        if (score > 50 && !vidasAceptadas) {
+            vidas = 3; 
+            vidasAceptadas = true;
+        }else if(score > 100 && !vidasAceptadas){
             vidas = 3;
+            vidasAceptadas = true;
+        }else if(score < 50) {
+            vidasIncrementadas = false;
         }
     }
 
@@ -281,8 +307,8 @@ function update() {
 function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
+    SoundrackMusic();
     if (gameOver) {
-        toggleMusica();
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
         ctx.fillText("SCORE: ", 5, 50);
@@ -316,17 +342,38 @@ function paint() {
         ctx.drawImage(heavyMachine, target.x, target.y, 20, 20);
 
         for (var i = walls.length - 1; i >= 0; i--) {
-            walls[i].paint(ctx);
+            //walls[i].paint(ctx);
             ctx.drawImage(serpiente, walls[i].x, walls[i].y, w, h);
         }
 
         for (var i = paredes.length - 1; i >= 0; i--) {
             paredes[i].paint(ctx);
         }
-
+        if(mission){
+            soundrack.pause();
+            if(a){
+                musicComplete.play();
+                a = false;
+            }
+            ctx.font = "20px Georgia";
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(missionComplete, 180, 100, 300, 300);
+            ctx.fillStyle = "rgb(255, 228, 0)";
+            ctx.fillText("REINICIAR [E]", 10, 480);
+            ctx.fillText("V I D A S: ", 170, 480);
+            ctx.fillText(vidas, 270, 480);
+            ctx.fillText("S C O R E: ", 300, 480);
+            ctx.fillText(score, 410, 480);
+            ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
+            ctx.fillText(scoreTop, 210, 25);
+            ctx.drawImage(imageGioDerecha, 240, 300, 150, 150);  
+            reinicioWin = false;
+            
+        }
         if (pause) {
             ctx.font = "20px Georgia";
-            ctx.fillStyle = "rgba(0,0,0)";
+            ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "rgb(255, 228, 0)";
             ctx.fillText("P A U S E [ENTER]", 235, 170);
@@ -341,21 +388,24 @@ function paint() {
             ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
 
         }
-    } else {
-        ctx.font = "20px Georgia";
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(255, 228, 0)";
-        ctx.fillText("G A M E O V E R [Q]", 235, 190);
-        ctx.fillText("V I D A S: ", 260, 240);
-        ctx.fillText(vidas, 370, 238);
-        ctx.fillText("S C O R E: ", 265, 280);
-        ctx.fillText(score, 370, 280);
-        ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
-        ctx.fillText(scoreTop, 220, 25);
-        ctx.drawImage(imageGioDerecha, 240, 270, 150, 150);
-    }
-
+    } else if(missionFailed){
+            soundrack.pause();
+            if(p){
+                missionFailedAudio.play(); 
+                p = false;
+            }
+            ctx.font = "30px Georgia";
+            ctx.fillStyle = "black";
+            ctx.fillStyle = "rgba(255, 228, 0)";
+            ctx.drawImage(fondoFailed,0,0,canvas.width,canvas.height);
+            ctx.fillText("G A M E O V E R [Q]", 190, 190);
+            ctx.fillText("V I D A S: ", 250, 240);
+            ctx.fillText(vidas, 390, 238);
+            ctx.fillText("S C O R E: ", 250, 290);
+            ctx.fillText(score, 400, 290);
+            ctx.fillText("PUNTUACIÓN TOP: ", 10, 30);
+            ctx.fillText(scoreTop, 305, 25);
+        }
 }
 
 cargarEstadoJuego();
@@ -384,8 +434,14 @@ window.addEventListener('beforeunload', guardarEstadoJuego);
 
 function reiniciarJuego() {
     score = 0;
-    vidas = 3;
+    vidas = 1;
+    player.x = 85;
+    player.y = 465;
     gameOver = true;
+    reinicioWin = true;
+    missionFailed = false;
+    mission = false;
+    soundrack.play();
     guardarEstadoJuego();
 }
 
