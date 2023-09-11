@@ -35,6 +35,7 @@ var speed =5;
 var score = 0;
 var direccion = randomInteger(3, 4);
 
+var soundrackPlay = true;
 var h = 50;
 var w = 300;
 var x = 300;
@@ -44,7 +45,6 @@ var vidas = 1;
 var gameOver = true;
 var scoreTop = 0;
 var lastScore = 0;
-var musicaPauseSoundrack = false;
 var playerDirection = true;
 var vidasAceptadas = false;
 var reinicioWin = true;
@@ -105,20 +105,6 @@ paredes.push(new Cuadrado(460, 102, 150, 10, "black"));
 paredes.push(new Cuadrado(320, 102, 10, 97, "black"));
 paredes.push(new Cuadrado(320, 250, 10, 97, "black"));
 paredes.push(new Cuadrado(260, 300, 290, 10, "black"));
-
-
-
-
-function SoundrackMusic() {
-    if (!musicaPauseSoundrack) {
-        if (soundrack.paused) {
-            soundrack.play();
-        } else {
-            soundrack.pause();
-        }
-        musicaPauseSoundrack = true;
-    }
-}
    
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
@@ -132,7 +118,7 @@ window.requestAnimationFrame = (function () {
 //teclado
 document.addEventListener("keydown", (e) => {
     if (e.keyCode == 13) {
-        musicaPauseSoundrack = false;
+        soundrack.pause();
         pause = !pause;
     } else if (!pause) {
         if (e.keyCode == 87) {
@@ -168,9 +154,14 @@ document.addEventListener("keydown", (e) => {
 
 function update() {
     if (!pause) {
+        if(soundrackPlay){
+            soundrack.play();
+        }
         if (dir == 1) {
             if (player.y < 0) {
+                soundrackPlay = false;
                 if (score >= scoreTop) {
+                    soundrack.pause();
                     mission = true;
                     missionFailed = false;
                     gameOver = !gameOver;
@@ -231,6 +222,7 @@ function update() {
                     score = 0;
                 }
                 if (vidas == 0) {
+                    soundrackPlay = false;
                     if (score >= scoreTop) {
                         missionFailed = true;
                         gameOver = !gameOver;
@@ -320,7 +312,6 @@ function update() {
 function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
-    SoundrackMusic();
     if (gameOver) {
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
@@ -381,7 +372,6 @@ function paint() {
         }
     } 
         if(mission){
-            soundrack.pause();
             if(a){
                 musicComplete.play();
                 a = false;
@@ -454,11 +444,11 @@ function reiniciarJuego() {
     player.y = 465;
     p = true;
     a= true;
+    soundrackPlay = true;
     gameOver = true;
     reinicioWin = true;
     missionFailed = false;
     mission = false;
-    musicaPauseSoundrack = false;
     guardarEstadoJuego();
 }
 
