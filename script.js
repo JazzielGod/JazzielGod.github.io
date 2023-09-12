@@ -505,6 +505,8 @@ function cargarEstadoJuego() {
     const estadoGuardado = localStorage.getItem('estadoJuego');
     if (estadoGuardado) {
         const estadoJuego = JSON.parse(estadoGuardado);
+        scoreTop = estadoJuego.scoreTop;
+        lastScore = estadoJuego.lastScore;
     }
 }
 
