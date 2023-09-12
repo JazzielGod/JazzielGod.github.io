@@ -23,8 +23,16 @@ let missionFailedAudio = new Audio();
 missionFailedAudio.src = "missionFailed.mp3";
 let missionComplete = new Image();
 missionComplete.src = "missionComplete.png";
+let flechasalida = new Image();
+flechasalida.src = "flechasalida.png";
 
-let cronometro;
+let tank = new Image();
+tank.src = "tank.jpeg";
+
+let tank2 = new Image();
+tank2.src = "tank2.png";
+var ladoTank = true;
+
 let segundos = 0;
 let minutos = 0;
 var tiempoTotal = 0; 
@@ -38,13 +46,17 @@ var mission = false;
 var paredes = [];
 var walls = [];
 var dir = 0;
-var speed =4;
+var speedPlayer = 3;
+var speedSerpi = 1;
+var speedSerpiHigth = 20;
 var score = 0;
 var direccion = randomInteger(3, 4);
+var direccionTank = randomInteger(3,4);
+var speedTank = 1;
 
 var soundrackPlay = true;
 var h = 50;
-var w = 300;
+var w = 400;
 var x = 300;
 var pause = false;
 var gioPause = false;
@@ -78,12 +90,14 @@ class Cuadrado {
 
 const player = new Cuadrado(85, 465, 30, 30, "black");
 const target = new Cuadrado(randomInteger(85, 400), randomInteger(20, 400), 20, 20, "black");
-const targetTwo = new Cuadrado(randomInteger(85, 400), randomInteger(20, 400), 20, 20, "black");
 
 //obstaculos-movimiento
 walls.push(new Cuadrado(x, 50, w, h, "gray"));
 walls.push(new Cuadrado(x, 200, w, h, "gray"));
 walls.push(new Cuadrado(x, 350, w, h, "gray"));
+//obstaculos-movimiento-tanques-prueba
+const targetTank = new Cuadrado(90, 427, 30, 30, "black");
+
 
 //paredes
 paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(255, 241, 125,.5)"));
@@ -97,8 +111,6 @@ paredes.push(new Cuadrado(400, 400, 300, 10, "black"));
 paredes.push(new Cuadrado(400, 345, 300, 10, "black"));
 paredes.push(new Cuadrado(400, 250, 300, 10, "black"));
 paredes.push(new Cuadrado(400, 190, 300, 10, "black"));
-
-
 paredes.push(new Cuadrado(80, 10, 2, 500, "black"));
 paredes.push(new Cuadrado(115, 400, 248, 10, "black"));
 paredes.push(new Cuadrado(270, 45, 150, 10, "black"));
@@ -114,14 +126,15 @@ paredes.push(new Cuadrado(320, 250, 10, 97, "black"));
 paredes.push(new Cuadrado(260, 300, 290, 10, "black"));
 paredes.push(new Cuadrado(225, 100, 180, 10, "black"));
 paredes.push(new Cuadrado(270, 50, 10, 100, "black"));
-paredes.push(new Cuadrado(155, 45, 70, 10, "black"));
+paredes.push(new Cuadrado(160, 45, 70, 10, "black"));
 paredes.push(new Cuadrado(158, 200, 50, 10, "black"));
 paredes.push(new Cuadrado(420, 455, 180, 10, "black"));
 paredes.push(new Cuadrado(80, 250, 45, 10, "black"));
 paredes.push(new Cuadrado(250, 190, 80, 10, "black"));
 paredes.push(new Cuadrado(220, 45, 80, 10, "black"));
 paredes.push(new Cuadrado(210, 250, 70, 10, "black"));
-
+paredes.push(new Cuadrado(205, 350, 70, 10, "black"));
+paredes.push(new Cuadrado(450, 250, 10, 50, "black"));
 
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
@@ -193,7 +206,7 @@ function update() {
                 }
                 //player.y = 500;
             } else {
-                player.y -= speed;
+                player.y -= speedPlayer;
             }
         }
 
@@ -201,7 +214,7 @@ function update() {
             if (player.y > 500) {
                 player.y = -30;
             } else {
-                player.y += speed;
+                player.y += speedPlayer;
 
             }
         }
@@ -210,7 +223,7 @@ function update() {
             if (player.x > 600) {
                 player.x = -30;
             } else {
-                player.x += speed;
+                player.x += speedPlayer;
 
             }
         }
@@ -219,16 +232,36 @@ function update() {
             if (player.x - 30 < 0) {
                 player.x = 600;
             } else {
-                player.x -= speed;
+                player.x -= speedPlayer;
 
             }
         }
+
+        if (direccionTank == 3) {
+            if (targetTank.x > 500) {
+                ladoTank = false;
+                direccionTank  = 4;
+            } else {
+                targetTank.x += speedTank;
+
+            }
+        }
+        if (direccionTank == 4) {
+            if (targetTank.x - 80 < 0) {
+                ladoTank = true;
+                direccionTank  = 3;
+            } else {
+                targetTank.x -= speedTank;
+
+            }
+        }
+    
 
         //movimiento de obsbtaculos
         // Verificar colisión con los obstaculos
         for (var i = walls.length - 1; i >= 0; i--) {
 
-            if (player.seTocan(walls[i])) {
+            if (player.seTocan(walls[i]) || player.seTocan(targetTank)) {
                 vidas = vidas - 1;
                 audioScream.play();
                 player.x = 85;
@@ -258,7 +291,7 @@ function update() {
                 if (walls[i].x > 800) {
                     direccion = 4;
                 } else {
-                    walls[i].x += speed;
+                    walls[i].x += speedSerpi;
                 }
             }
 
@@ -266,7 +299,7 @@ function update() {
                 if (walls[i].x - 300 < 0) {
                     direccion = 3;
                 } else {
-                    walls[i].x -= speed;
+                    walls[i].x -= speedSerpiHigth;
                 }
             }
 
@@ -276,16 +309,16 @@ function update() {
     //space para pausar jugador
     if (gioPause) {
         if (dir == 1) {
-            player.y += speed;
+            player.y += speedPlayer;
         }
         if (dir == 2) {
-            player.y -= speed;
+            player.y -= speedPlayer;
         }
         if (dir == 3) {
-            player.x -= speed;
+            player.x -= speedPlayer;
         }
         if (dir == 4) {
-            player.x += speed;
+            player.x += speedPlayer;
         }
     }
 
@@ -308,16 +341,16 @@ function update() {
     for (var i = paredes.length - 1; i >= 0; i--) {
         if (player.seTocan(paredes[i])) {
             if (dir == 1) {
-                player.y += speed;
+                player.y += speedPlayer;
             }
             if (dir == 2) {
-                player.y -= speed;
+                player.y -= speedPlayer;
             }
             if (dir == 3) {
-                player.x -= speed;
+                player.x -= speedPlayer;
             }
             if (dir == 4) {
-                player.x += speed;
+                player.x += speedPlayer;
             }
         }
     }
@@ -329,6 +362,7 @@ function update() {
 function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
+    ctx.drawImage(flechasalida,540,5,50,50);
     if (gameOver) {
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
@@ -362,6 +396,12 @@ function paint() {
         }else{
             ctx.drawImage(imageGioIzq, player.x, player.y, 30, 30);
         }
+        if(ladoTank){
+            ctx.drawImage(tank, targetTank.x, targetTank.y, 30, 30);
+        }else{
+            ctx.drawImage(tank2, targetTank.x, targetTank.y, 30, 30);
+        }
+        //targetTank.paint(ctx);
 
         ctx.drawImage(heavyMachine, target.x, target.y, 20, 20);
 

@@ -6,20 +6,25 @@
     <title>L A B E R I N T O</title>
     <style>
         canvas{
-            background-color: rgb(231, 255, 144);
+            background-color: rgb(0, 0, 0);
             border: 2px solid black;
+        }
+        body {
+            background-image: url("FondoJuego.jpg");
+            background-size: cover;
         }      
     </style>
 </head>
 <body>
-    
-    <canvas id="myCanvas" width="600px" height="500px"></canvas>
-    <audio id="soundrack" loop>
-        <source src="soundrack.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="musicComplete">
-        <source src="Mission-Complete.mp3" type="audio/mpeg">
-    </audio>
+    <center>
+        <canvas id="myCanvas" width="600px" height="500px"></canvas>
+            <audio id="soundrack" loop>
+                <source src="soundrack.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="musicComplete">
+                <source src="Mission-Complete.mp3" type="audio/mpeg">
+            </audio>
+    </center>
     <script src="script.js"></script>
 </body>
 </html>
