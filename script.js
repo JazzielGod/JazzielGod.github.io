@@ -25,13 +25,16 @@ let missionComplete = new Image();
 missionComplete.src = "missionComplete.png";
 let flechasalida = new Image();
 flechasalida.src = "flechasalida.png";
-
 let tank = new Image();
 tank.src = "tank.jpeg";
-
 let tank2 = new Image();
 tank2.src = "tank2.png";
+
 var ladoTank = true;
+var winScore = false;
+
+var tiempoTop = 0;
+var tiempoFailed = 0;
 
 let segundos = 0;
 let minutos = 0;
@@ -189,8 +192,10 @@ function update() {
         }
         if (dir == 1) {
             if (player.y < 0) {
+                winScore = true;
                 soundrackPlay = false;
-                if (score >= scoreTop) {
+                if (score >= scoreTop && winScore) {
+                    winScore = false;
                     soundrack.pause();
                     mission = true;
                     missionFailed = false;
@@ -266,14 +271,14 @@ function update() {
                 audioScream.play();
                 player.x = 85;
                 player.y = 465;
-                score = score - 10;
+                score = score - 50;
                 guardarEstadoJuego();
                 if (score < 0) {
                     score = 0;
                 }
                 if (vidas == 0) {
                     soundrackPlay = false;
-                    if (score >= scoreTop) {
+                    if (score >= scoreTop && winScore ) {
                         missionFailed = true;
                         gameOver = !gameOver;
                         scoreTop = score;
@@ -288,7 +293,7 @@ function update() {
             }
 
             if (direccion == 3) {
-                if (walls[i].x > 800) {
+                if (walls[i].x > 750) {
                     direccion = 4;
                 } else {
                     walls[i].x += speedSerpi;
@@ -329,10 +334,10 @@ function update() {
         guardarEstadoJuego();
         audioHeavyMachine.play();
         if (score > 50 && !vidasAceptadas) {
-            vidas = 1; 
+            vidas = vidas + 1; 
             vidasAceptadas = true;
         }else if(score > 100 && !vidasAceptadas){
-            vidas = 3;
+            vidas = vidas + 1;
             vidasAceptadas = true;
         }
     }
@@ -434,6 +439,7 @@ function paint() {
         }
     } 
         if(mission){
+            soundrack.pause();
             if(a){
                 musicComplete.play();
                 a = false;
@@ -451,6 +457,8 @@ function paint() {
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 210, 25);
             ctx.drawImage(imageGioDerecha, 240, 300, 150, 150);  
+            ctx.fillText("Tiempo:", 450, 480);
+            ctx.fillText(tiempoRestante, 540, 480);
             reinicioWin = false;
         }
 
@@ -471,6 +479,8 @@ function paint() {
             ctx.fillText(score, 400, 290);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 30);
             ctx.fillText(scoreTop, 305, 25);
+            ctx.fillText("Tiempo:", 5, 480);
+            ctx.fillText(tiempoRestante, 125, 480);
         }
 }
 
@@ -486,6 +496,7 @@ function guardarEstadoJuego() {
     const estadoJuego = {
         score: score,
         scoreTop: scoreTop,
+        tiempoTop: tiempoTop,
     };
     localStorage.setItem('estadoJuego', JSON.stringify(estadoJuego));
 }
@@ -510,7 +521,10 @@ function reiniciarJuego() {
     gameOver = true;
     reinicioWin = true;
     missionFailed = false;
+    winScore = false;
     mission = false;
+    vidasAceptadas = false;
+    tiempoRestante = 0;
     guardarEstadoJuego();
 }
 
@@ -521,13 +535,16 @@ function dibujarTiempo() {
   }
 
 function actualizarTemporizador() {
-    tiempoRestante++;
-
-    if (tiempoRestante >= 0) {
-      dibujarTiempo();
-    } else {
-      clearInterval(intervalID); 
-      
+    if(winScore){
+        clearInterval(intervalID);
+    }else{
+        if(!pause && mission == false && !missionFailed){
+            tiempoRestante++;
+            if (tiempoRestante >= 0) {
+                dibujarTiempo();
+                tiempoTop = dibujarTiempo();
+              } 
+        }
     }
   }
   var intervalID = setInterval(actualizarTemporizador, intervalo);
