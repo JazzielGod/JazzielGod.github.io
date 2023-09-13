@@ -13,7 +13,7 @@ else if(songRandom == 2){
     soundrack.src = "soundrack3.mp3";
 }
 
-import { fondoPause,helicopterDer,helicopterIzq,alien, avionIzq,
+import { missionCompleteFondo,fondoPause,helicopterDer,helicopterIzq,alien, avionIzq,
     avionDer, teclaSpace,
     teclaEnter, movimientos,
     fondoMap, imageGioDerecha,
@@ -549,15 +549,16 @@ function paint() {
         }
     } 
         if(mission){
+            ctx.drawImage(missionCompleteFondo,0,0,canvas.width,canvas.height);
             soundrack.pause();
             if(a){
                 musicComplete.play();
                 a = false;
             }
             ctx.font = "20px Georgia";
-            ctx.fillStyle = "black";
+            ctx.fillStyle = "rgba(0,0,0,.5)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(missionComplete, 380, 100, 300, 300);
+            ctx.drawImage(missionComplete, 380, 50, 350, 350);
             ctx.fillStyle = "rgb(255, 228, 0)";
             ctx.fillText("REINICIAR [Q]", 10, 480);
             ctx.fillText("V I D A S: ", 170, 480);
@@ -566,7 +567,7 @@ function paint() {
             ctx.fillText(score, 410, 480);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 210, 25);
-            ctx.drawImage(imageGioDerecha, 440, 300, 150, 150);  
+            ctx.drawImage(imageGioDerecha, 450, 300, 150, 150);  
             ctx.fillText("Tiempo:", 450, 480);
             ctx.fillText(tiempoRestante + "s", 540, 480);
         }

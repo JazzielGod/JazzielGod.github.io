@@ -1,3 +1,5 @@
+export const missionCompleteFondo = new Image();
+missionCompleteFondo.src = "missionCompleteFondo.jpg";
 
 export const fondoPause = new Image();
 fondoPause.src = "fondoPause.jpeg";
