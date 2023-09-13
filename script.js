@@ -591,6 +591,13 @@ function paint() {
             ctx.fillText(scoreTop, 305, 25);
             ctx.fillText("Tiempo:", 5, 480);
             ctx.fillText(tiempoRestante + "s", 125, 480);
+            ctx.drawImage(imageGioDerecha, 460, 300, 150, 150);  
+            ctx.drawImage(helicopterDer, 50, 200, 100, 100);  
+            ctx.drawImage(alien, 800, 300, 100, 100);  
+            ctx.drawImage(tank, 200, 400, 100, 100);  
+            ctx.drawImage(avionIzq, 600, 20, 150, 100);  
+
+
         }
         
 }
