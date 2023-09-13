@@ -13,49 +13,24 @@ else if(songRandom == 2){
     soundrack.src = "soundrack3.mp3";
 }
 
-let avionIzq = new Image();
-avionIzq.src = "avion.png";
-let avionDer = new Image();
-avionDer.src = "avion2.png";
-let teclaSpace = new Image();
-teclaSpace.src = "teclaSpace.png";
-let teclaEnter = new Image();
-teclaEnter.src = "teclaEnter.png";
-let movimientos = new Image();
-movimientos.src = "imagenMovimientos.png";
-let fondoMap = new Image();
-fondoMap.src = "FondoMapa.jpg";
-let imageGioDerecha = new Image();
-imageGioDerecha.src = "gioDerecha.gif";
-let heavyMachine = new Image();
-heavyMachine.src = "heavyMachine.gif";
-let audioScream = new Audio();
-audioScream.src = "metal-scream.mp3";
-let audioHeavyMachine = new Audio();
-audioHeavyMachine.src = "heavy-machine.mp3";
-let imageGioIzq = new Image();
-imageGioIzq.src = "gioIzquierda.gif";
-let serpiente = new Image();
-serpiente.src = "serpiente2.png";
-let fondoFailed = new Image();
-fondoFailed.src = "Failed.png";
-let missionFailedAudio = new Audio();
-missionFailedAudio.src = "missionFailed.mp3";
-let missionComplete = new Image();
-missionComplete.src = "missionComplete.png";
-let flechasalida = new Image();
-flechasalida.src = "flechasalida.png";
-let tank = new Image();
-tank.src = "tank.jpeg";
-let tank2 = new Image();
-tank2.src = "tank2.png";
+import { helicopterDer,helicopterIzq,alien, avionIzq,
+    avionDer, teclaSpace,
+    teclaEnter, movimientos,
+    fondoMap, imageGioDerecha,
+    heavyMachine, audioScream,
+    audioHeavyMachine, imageGioIzq,
+    serpiente, fondoFailed,
+    missionFailedAudio,
+    missionComplete,
+    flechasalida,
+    tank,
+    tank2 } from './scriptImages_Audio.js';
 
-var direccionAvion = randomInteger(1,4);
+var direccionAlien = 1;
+var direccionAvion = 3;
 var ladoAvion = true;
 var ladoTank = true;
 var winScore = false;
-let segundos = 0;
-let minutos = 0;
 var tiempoTotal = 0; 
 var tiempoRestante = tiempoTotal; 
 var intervalo = 1000; 
@@ -68,16 +43,18 @@ var walls = [];
 var dir = 0;
 var speedPlayer = 3;
 var speedSerpi = 1;
-var speedSerpiHigth = 20;
+var speedSerpiHigth = 50;
 var score = 0;
 var direccion = randomInteger(3, 4);
-var direccionTank = randomInteger(3,4);
-var speedTank = 1;
+var direccionTank = 3;
+var speedTank = 3;
+var speedAvion = 4;
+var direccionHelicopter = 3;
 
 var soundrackPlay = true;
 var h = 50;
 var w = 400;
-var x = 300;
+var x = 750;
 var pause = false;
 var gioPause = false;
 var vidas = 2;
@@ -86,6 +63,9 @@ var scoreTop = 0;
 var lastScore = 0;
 var playerDirection = true;
 var vidasAceptadas = false;
+var speedAlien = 1;
+var speedHelicopter = 2;
+var ladoHelicopter = true;
 
 class Cuadrado {
     constructor(x, y, w, h, c) {
@@ -108,7 +88,7 @@ class Cuadrado {
 }
 
 const player = new Cuadrado(85, 465, 30, 30, "black");
-const target = new Cuadrado(randomInteger(85, 400), randomInteger(20, 400), 20, 20, "black");
+const target = new Cuadrado(randomInteger(85, 950), randomInteger(20, 450), 20, 20, "black");
 
 //obstaculos-movimiento
 walls.push(new Cuadrado(x, 50, w, h, "gray"));
@@ -116,18 +96,28 @@ walls.push(new Cuadrado(x, 200, w, h, "gray"));
 walls.push(new Cuadrado(x, 350, w, h, "gray"));
 //obstaculos-movimiento-tanques-prueba
 const targetTank = new Cuadrado(90, 427, 30, 30, "black");
-const targetAvion = new Cuadrado(180, 60, 30, 30, "black");
+const targetAvion = new Cuadrado(500, 115, 30, 30, "black");
+const targetAlien = new Cuadrado(126, 50, 30, 30, "black");
+const targetHelicopter = new Cuadrado(550, 315, 30, 30, "black");
 
-//paredes
+
+//paredes(aristas)
 paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(0, 255, 255,.1)"));
-paredes.push(new Cuadrado(0, 0, 535, 10, "black"));
-paredes.push(new Cuadrado(595, 0, 10, 500, "black"));
-paredes.push(new Cuadrado(0, 495, 595, 10, "black"));
-
+paredes.push(new Cuadrado(0, 0, 950, 10, "black"));
+paredes.push(new Cuadrado(995, 0, 10, 500, "black"));
+paredes.push(new Cuadrado(0, 495, 1000, 10, "black"));
 //paredes-obstaculos-laberinto
 paredes.push(new Cuadrado(80, 455, 300, 10, "black"));
-paredes.push(new Cuadrado(400, 400, 300, 10, "black"));
+paredes.push(new Cuadrado(400, 400, 550, 10, "black"));
 paredes.push(new Cuadrado(400, 345, 300, 10, "black"));
+paredes.push(new Cuadrado(745, 345, 300, 10, "black"));
+paredes.push(new Cuadrado(600, 300, 400, 10, "black"));
+paredes.push(new Cuadrado(750, 250, 250, 10, "black"));
+paredes.push(new Cuadrado(490, 300, 10, 50, "black"));
+paredes.push(new Cuadrado(550, 200, 10, 60, "black"));
+paredes.push(new Cuadrado(550, 345, 10, 60, "black"));
+
+
 paredes.push(new Cuadrado(400, 250, 300, 10, "black"));
 paredes.push(new Cuadrado(400, 190, 300, 10, "black"));
 paredes.push(new Cuadrado(80, 10, 2, 500, "black"));
@@ -147,7 +137,17 @@ paredes.push(new Cuadrado(225, 100, 180, 10, "black"));
 paredes.push(new Cuadrado(270, 50, 10, 100, "black"));
 paredes.push(new Cuadrado(160, 45, 70, 10, "black"));
 paredes.push(new Cuadrado(158, 200, 50, 10, "black"));
-paredes.push(new Cuadrado(420, 455, 180, 10, "black"));
+paredes.push(new Cuadrado(370, 455, 400, 10, "black"));
+paredes.push(new Cuadrado(810, 455, 250, 10, "black"));
+paredes.push(new Cuadrado(460, 45, 280, 10, "black"));
+paredes.push(new Cuadrado(560, 145, 500, 10, "black"));
+paredes.push(new Cuadrado(655, 102, 500, 10, "black"));
+paredes.push(new Cuadrado(700, 190, 250, 10, "black"));
+paredes.push(new Cuadrado(460, 150, 10, 50, "black"));
+paredes.push(new Cuadrado(780, 45, 250, 10, "black"));
+
+
+
 paredes.push(new Cuadrado(80, 250, 45, 10, "black"));
 paredes.push(new Cuadrado(250, 190, 80, 10, "black"));
 paredes.push(new Cuadrado(220, 45, 80, 10, "black"));
@@ -229,7 +229,7 @@ function update() {
         }
 
         if (dir == 3) {
-            if (player.x > 600) {
+            if (player.x > 1000) {
                 player.x = -30;
             } else {
                 player.x += speedPlayer;
@@ -239,7 +239,7 @@ function update() {
 
         if (dir == 4) {
             if (player.x - 30 < 0) {
-                player.x = 600;
+                player.x = 1000;
             } else {
                 player.x -= speedPlayer;
 
@@ -247,7 +247,7 @@ function update() {
         }
 
         if (direccionTank == 3) {
-            if (targetTank.x > 500) {
+            if (targetTank.x > 900) {
                 ladoTank = false;
                 direccionTank  = 4;
             } else {
@@ -265,50 +265,99 @@ function update() {
             }
         }
 
-        for(var i = paredes.length - 1; i >= 0; i--){
-            if (direccionAvion == 1) {
-                if (targetAvion.seTocan(paredes[i])) {
-                    direccionAvion  = randomInteger(1,4);
-                } else {
-                    targetAvion.y -= speedTank;
-                }
-            }
-
-            if (direccionAvion == 2) {
-                if (targetAvion.seTocan(paredes[i])) {
-                    direccionAvion  = randomInteger(1,4);
-                } else {
-                    targetAvion.y += speedTank;
-
-                }
-            }
-
-            if (direccionAvion == 3) {
-                if (targetAvion.seTocan(paredes[i])) {
+        //direccion de avion y verificar colision con las paredes
+        for (var i = paredes.length - 1; i >= 0; i--) {
+            if (targetAvion.seTocan(paredes[i])) {
+                if(direccionAvion == 3){
                     ladoAvion = false;
-                    direccionAvion  = randomInteger(1,4);
-                } else {
-                    targetAvion.x += speedTank;
-
-                }
-            }
-            if (direccionAvion == 4) {
-                if (targetAvion.seTocan(paredes[i])) {
-                    ladoTank = true;
-                    direccionAvion  = randomInteger(1,4);
-                } else {
-                    targetAvion.x -= speedTank;
-
-                }
+                     direccionAvion = 4;
+               }else if(direccionAvion == 4){
+                    ladoAvion = true;
+                    direccionAvion = 3; 
+               }
             }
         }
-    
 
+        if (direccionAvion == 3) {
+
+            if (targetAvion.x < 0) {
+                targetAvion.x = 1000;
+            } else {
+                targetAvion.x += speedAvion;
+            }
+        }
+        
+        if (direccionAvion == 4) {
+
+            if (targetAvion.x > 1000) {
+                targetAvion.x = 0;
+            } else {
+                targetAvion.x -= speedAvion;
+            }
+        }
+        //direccion de alien y verificacion de colision con paredes
+        for (var i = paredes.length - 1; i >= 0; i--) {
+            if ( targetAlien.seTocan(paredes[i])) {
+                if(direccionAlien == 1){
+                     direccionAlien = 2;
+               }else if(direccionAlien == 2){
+                    direccionAlien = 1; 
+               }
+            }
+        }
+
+        if (direccionAlien == 1) {
+            if (targetAlien.y < 0) {           
+                targetAlien.y = 0;
+            } else {
+                targetAlien.y -= speedAlien;
+            }
+        }
+        
+        if (direccionAlien == 2) {
+            if (targetAlien.y > 500) {
+                targetAlien.y = 0;
+            } else {
+                targetAlien.y += speedAlien;
+
+            }
+        }
+        //Direccion helicoptero y verificacion de colisiones
+        for (var i = paredes.length - 1; i >= 0; i--) {
+            if (targetHelicopter.seTocan(paredes[i])) {
+                if(direccionHelicopter == 3){
+                    ladoHelicopter = false;
+                     direccionHelicopter = 4;
+               }else if(direccionHelicopter == 4){
+                    ladoHelicopter = true;
+                    direccionHelicopter = 3; 
+               }
+            }
+        }
+
+        if (direccionHelicopter == 3) {
+
+            if (targetHelicopter.x < 0) {
+                targetHelicopter.x = 1000;
+            } else {
+                targetHelicopter.x += speedHelicopter;
+            }
+        }
+        
+        if (direccionHelicopter == 4) {
+
+            if (targetHelicopter.x > 1000) {
+                targetHelicopter.x = 0;
+            } else {
+                targetHelicopter.x -= speedHelicopter;
+            }
+        }
+        
         //movimiento de obsbtaculos
         // Verificar colisión con los obstaculos
         for (var i = walls.length - 1; i >= 0; i--) {
 
-            if (player.seTocan(walls[i]) || player.seTocan(targetTank)) {
+            if (player.seTocan(walls[i]) || player.seTocan(targetTank) || player.seTocan(targetAlien)) {
                 vidas = vidas - 1;
                 audioScream.play();
                 player.x = 85;
@@ -333,7 +382,7 @@ function update() {
             }
 
             if (direccion == 3) {
-                if (walls[i].x > 700) {
+                if (walls[i].x > 1100) {
                     direccion = 4;
                 } else {
                     walls[i].x += speedSerpi;
@@ -341,7 +390,7 @@ function update() {
             }
 
             if (direccion == 4) {
-                if (walls[i].x - 300 < 0) {
+                if (walls[i].x - 650 < 0) {
                     direccion = 3;
                 } else {
                     walls[i].x -= speedSerpiHigth;
@@ -373,10 +422,10 @@ function update() {
         score += 25;
         guardarEstadoJuego();
         audioHeavyMachine.play();
-        if (score > 50 && !vidasAceptadas) {
+        if (score > 100 && !vidasAceptadas) {
             vidas = vidas + 1; 
             vidasAceptadas = true;
-        }else if(score > 100 && !vidasAceptadas){
+        }else if(score > 300 && !vidasAceptadas){
             vidas = vidas + 1;
             vidasAceptadas = true;
         }
@@ -407,7 +456,7 @@ function update() {
 function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
-    ctx.drawImage(flechasalida,540,5,50,50);
+    ctx.drawImage(flechasalida,950,5,50,50);
 
     if (gameOver) {
         ctx.font = "20px Georgia";
@@ -439,8 +488,13 @@ function paint() {
         ctx.fillText("CONTROLS", 0, 220);
         ctx.drawImage(movimientos,10,230,60,60);
 
-
         ctx.drawImage(fondoMap, canvas.width, canvas.height, 100, 100);
+        if(ladoHelicopter){
+            //player.paint(ctx);
+            ctx.drawImage(helicopterDer, targetHelicopter.x, targetHelicopter.y, 30, 30);
+        }else{
+            ctx.drawImage(helicopterIzq, targetHelicopter.x, targetHelicopter.y, 30, 30);
+        }
         if(playerDirection){
             //player.paint(ctx);
             ctx.drawImage(imageGioDerecha, player.x, player.y, 30, 30);
@@ -452,9 +506,10 @@ function paint() {
         }else{
             ctx.drawImage(tank2, targetTank.x, targetTank.y, 30, 30);
         }
-
+        //targetAlien.paint(ctx);
+        ctx.drawImage(alien, targetAlien.x, targetAlien.y, 30, 30);
         if(ladoAvion){
-            targetAvion.paint(ctx);
+            //targetAvion.paint(ctx);
             ctx.drawImage(avionDer, targetAvion.x, targetAvion.y, 30, 30);
         }else{
             ctx.drawImage(avionIzq, targetAvion.x, targetAvion.y, 30, 30);
@@ -476,18 +531,18 @@ function paint() {
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "rgb(255, 228, 0)";
-            ctx.fillText("P A U S E [ENTER]", 235, 170);
-            ctx.fillText("V I D A S: ", 260, 215);
-            ctx.fillText(vidas, 400, 214);
-            ctx.fillText("S C O R E: ", 260, 260);
-            ctx.fillText(score, 400, 260);
-            ctx.fillText("LAST-SCORE: ", 250, 300);
-            ctx.fillText(lastScore, 400, 300);
+            ctx.fillText("P A U S E [ENTER]", 425, 170);
+            ctx.fillText("V I D A S: ", 460, 215);
+            ctx.fillText(vidas, 555, 214);
+            ctx.fillText("S C O R E: ", 460, 260);
+            ctx.fillText(score, 570, 260);
+            ctx.fillText("LAST-SCORE: ", 445, 300);
+            ctx.fillText(lastScore, 590, 300);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 220, 25);
-            ctx.fillText("Tiempo:", 5, 480);
-            ctx.fillText(tiempoRestante + "s", 90, 480);
-            ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
+            ctx.fillText("Tiempo:", 475, 480);
+            ctx.fillText(tiempoRestante + "s", 565, 480);
+            ctx.drawImage(imageGioDerecha, 450, 290, 150, 150);
 
         }
     } 
@@ -500,7 +555,7 @@ function paint() {
             ctx.font = "20px Georgia";
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(missionComplete, 180, 100, 300, 300);
+            ctx.drawImage(missionComplete, 380, 100, 300, 300);
             ctx.fillStyle = "rgb(255, 228, 0)";
             ctx.fillText("REINICIAR [Q]", 10, 480);
             ctx.fillText("V I D A S: ", 170, 480);
@@ -509,7 +564,7 @@ function paint() {
             ctx.fillText(score, 410, 480);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 210, 25);
-            ctx.drawImage(imageGioDerecha, 240, 300, 150, 150);  
+            ctx.drawImage(imageGioDerecha, 440, 300, 150, 150);  
             ctx.fillText("Tiempo:", 450, 480);
             ctx.fillText(tiempoRestante + "s", 540, 480);
         }
@@ -524,11 +579,11 @@ function paint() {
             ctx.fillStyle = "black";
             ctx.fillStyle = "rgba(255, 228, 0)";
             ctx.drawImage(fondoFailed,0,0,canvas.width,canvas.height);
-            ctx.fillText("G A M E O V E R [Q]", 190, 190);
-            ctx.fillText("V I D A S: ", 250, 240);
-            ctx.fillText(vidas, 390, 238);
-            ctx.fillText("S C O R E: ", 250, 290);
-            ctx.fillText(score, 400, 290);
+            ctx.fillText("G A M E O V E R [Q]", 400, 190);
+            ctx.fillText("V I D A S: ", 460, 240);
+            ctx.fillText(vidas, 600, 238);
+            ctx.fillText("S C O R E: ", 460, 290);
+            ctx.fillText(score, 625, 290);
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 30);
             ctx.fillText(scoreTop, 305, 25);
             ctx.fillText("Tiempo:", 5, 480);
