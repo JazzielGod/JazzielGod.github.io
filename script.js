@@ -8,10 +8,15 @@ let soundrack = new Audio();
 if(songRandom == 1){
     soundrack.src = "soundrack.mp3";}
 else if(songRandom == 2){
-    soundrack.src = "soundrack2.mp3"
+    soundrack.src = "soundrack2.mp3";
 }else{
-    soundrack.src = "soundrack3.mp3"
+    soundrack.src = "soundrack3.mp3";
 }
+
+let avionIzq = new Image();
+avionIzq.src = "avion.png";
+let avionDer = new Image();
+avionDer.src = "avion2.png";
 let teclaSpace = new Image();
 teclaSpace.src = "teclaSpace.png";
 let teclaEnter = new Image();
@@ -45,15 +50,15 @@ tank.src = "tank.jpeg";
 let tank2 = new Image();
 tank2.src = "tank2.png";
 
+var direccionAvion = randomInteger(1,4);
+var ladoAvion = true;
 var ladoTank = true;
 var winScore = false;
-
 let segundos = 0;
 let minutos = 0;
 var tiempoTotal = 0; 
 var tiempoRestante = tiempoTotal; 
 var intervalo = 1000; 
-
 var p = true; //se usa para una condicional, evitar que se repita cancion
 var a = true; //se usa para una condicional, evitar que se repita cancion
 var missionFailed = false;
@@ -111,7 +116,7 @@ walls.push(new Cuadrado(x, 200, w, h, "gray"));
 walls.push(new Cuadrado(x, 350, w, h, "gray"));
 //obstaculos-movimiento-tanques-prueba
 const targetTank = new Cuadrado(90, 427, 30, 30, "black");
-
+const targetAvion = new Cuadrado(180, 60, 30, 30, "black");
 
 //paredes
 paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(0, 255, 255,.1)"));
@@ -201,7 +206,7 @@ function update() {
                 soundrackPlay = false;
                 mission = true;
                 gameOver = !gameOver;
-                if (score >= scoreTop && winScore) {
+                if (score >= scoreTop && !winScore) {
                     scoreTop = score;
                     guardarEstadoJuego();
                 } else {
@@ -257,6 +262,44 @@ function update() {
             } else {
                 targetTank.x -= speedTank;
 
+            }
+        }
+
+        for(var i = paredes.length - 1; i >= 0; i--){
+            if (direccionAvion == 1) {
+                if (targetAvion.seTocan(paredes[i])) {
+                    direccionAvion  = randomInteger(1,4);
+                } else {
+                    targetAvion.y -= speedTank;
+                }
+            }
+
+            if (direccionAvion == 2) {
+                if (targetAvion.seTocan(paredes[i])) {
+                    direccionAvion  = randomInteger(1,4);
+                } else {
+                    targetAvion.y += speedTank;
+
+                }
+            }
+
+            if (direccionAvion == 3) {
+                if (targetAvion.seTocan(paredes[i])) {
+                    ladoAvion = false;
+                    direccionAvion  = randomInteger(1,4);
+                } else {
+                    targetAvion.x += speedTank;
+
+                }
+            }
+            if (direccionAvion == 4) {
+                if (targetAvion.seTocan(paredes[i])) {
+                    ladoTank = true;
+                    direccionAvion  = randomInteger(1,4);
+                } else {
+                    targetAvion.x -= speedTank;
+
+                }
             }
         }
     
@@ -408,6 +451,13 @@ function paint() {
             ctx.drawImage(tank, targetTank.x, targetTank.y, 30, 30);
         }else{
             ctx.drawImage(tank2, targetTank.x, targetTank.y, 30, 30);
+        }
+
+        if(ladoAvion){
+            targetAvion.paint(ctx);
+            ctx.drawImage(avionDer, targetAvion.x, targetAvion.y, 30, 30);
+        }else{
+            ctx.drawImage(avionIzq, targetAvion.x, targetAvion.y, 30, 30);
         }
         //targetTank.paint(ctx);
 
