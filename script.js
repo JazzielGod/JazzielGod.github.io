@@ -1,8 +1,23 @@
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
-var soundrack = document.getElementById('soundrack');
 var musicComplete = document.getElementById('musicComplete');
 
+
+var songRandom = randomInteger(1,3);
+let soundrack = new Audio();
+if(songRandom == 1){
+    soundrack.src = "soundrack.mp3";}
+else if(songRandom == 2){
+    soundrack.src = "soundrack2.mp3"
+}else{
+    soundrack.src = "soundrack3.mp3"
+}
+let teclaSpace = new Image();
+teclaSpace.src = "teclaSpace.png";
+let teclaEnter = new Image();
+teclaEnter.src = "teclaEnter.png";
+let movimientos = new Image();
+movimientos.src = "imagenMovimientos.png";
 let fondoMap = new Image();
 fondoMap.src = "FondoMapa.jpg";
 let imageGioDerecha = new Image();
@@ -33,9 +48,6 @@ tank2.src = "tank2.png";
 var ladoTank = true;
 var winScore = false;
 
-var tiempoTop = 0;
-var tiempoFailed = 0;
-
 let segundos = 0;
 let minutos = 0;
 var tiempoTotal = 0; 
@@ -63,13 +75,12 @@ var w = 400;
 var x = 300;
 var pause = false;
 var gioPause = false;
-var vidas = 1;
+var vidas = 2;
 var gameOver = true;
 var scoreTop = 0;
 var lastScore = 0;
 var playerDirection = true;
 var vidasAceptadas = false;
-var reinicioWin = true;
 
 class Cuadrado {
     constructor(x, y, w, h, c) {
@@ -103,7 +114,7 @@ const targetTank = new Cuadrado(90, 427, 30, 30, "black");
 
 
 //paredes
-paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(255, 241, 125,.5)"));
+paredes.push(new Cuadrado(0, 10, 80, 485, "rgba(0, 255, 255,.1)"));
 paredes.push(new Cuadrado(0, 0, 535, 10, "black"));
 paredes.push(new Cuadrado(595, 0, 10, 500, "black"));
 paredes.push(new Cuadrado(0, 495, 595, 10, "black"));
@@ -176,11 +187,6 @@ document.addEventListener("keydown", (e) => {
                 reiniciarJuego();
             }
         }
-        if (e.keyCode == 69) {
-            if (!reinicioWin) {
-               reiniciarJuego();
-            }
-        }
     }
     
 })
@@ -192,20 +198,13 @@ function update() {
         }
         if (dir == 1) {
             if (player.y < 0) {
-                winScore = true;
                 soundrackPlay = false;
+                mission = true;
+                gameOver = !gameOver;
                 if (score >= scoreTop && winScore) {
-                    winScore = false;
-                    soundrack.pause();
-                    mission = true;
-                    missionFailed = false;
-                    gameOver = !gameOver;
                     scoreTop = score;
                     guardarEstadoJuego();
                 } else {
-                    missionFailed = false;
-                    mission = true;
-                    gameOver = !gameOver;
                     lastScore = score;
                     guardarEstadoJuego();
                 }
@@ -278,14 +277,12 @@ function update() {
                 }
                 if (vidas == 0) {
                     soundrackPlay = false;
-                    if (score >= scoreTop && winScore ) {
-                        missionFailed = true;
-                        gameOver = !gameOver;
+                    missionFailed = true;
+                    gameOver = !gameOver;
+                    if (score >= scoreTop) {
                         scoreTop = score;
                         guardarEstadoJuego();
                     } else {
-                        missionFailed = true;
-                        gameOver = !gameOver;
                         lastScore = score;
                         guardarEstadoJuego();
                     }
@@ -293,7 +290,7 @@ function update() {
             }
 
             if (direccion == 3) {
-                if (walls[i].x > 750) {
+                if (walls[i].x > 700) {
                     direccion = 4;
                 } else {
                     walls[i].x += speedSerpi;
@@ -330,7 +327,7 @@ function update() {
     if (player.seTocan(target)) {
         target.x = randomInteger(85, 500);
         target.y = randomInteger(20, 400);
-        score += 20;
+        score += 25;
         guardarEstadoJuego();
         audioHeavyMachine.play();
         if (score > 50 && !vidasAceptadas) {
@@ -368,6 +365,7 @@ function paint() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(fondoMap,0,0,canvas.width,canvas.height);
     ctx.drawImage(flechasalida,540,5,50,50);
+
     if (gameOver) {
         ctx.font = "20px Georgia";
         ctx.fillStyle = "black";
@@ -380,19 +378,24 @@ function paint() {
         ctx.fillText(vidas, 30, 120);
         
         ctx.fillText("Tiempo:", 5, 160);
-        ctx.fillText(tiempoRestante, 30, 190);
+        ctx.fillText(tiempoRestante + "s", 30, 190);
         
         ctx.font = "15px Georgia";
         ctx.fillStyle = "black";
-        ctx.fillText("PAUSAR", 10, 450);
-        ctx.fillText("JUGADOR", 5, 470);
-        ctx.fillText("[SPACE]", 10, 490);
+        ctx.fillText("PAUSAR", 10, 420);
+        ctx.fillText("JUGADOR", 5, 440);
+        ctx.fillText("SPACE", 15, 470);
+        ctx.drawImage(teclaSpace,5,450,70,35);
 
         ctx.font = "15px Georgia";
         ctx.fillStyle = "black";
-        ctx.fillText("PAUSAR", 10, 370);
-        ctx.fillText("PARTIDA", 8, 390);
-        ctx.fillText("[ENTER]", 10, 410);
+        ctx.fillText("PAUSAR", 10, 315);
+        ctx.fillText("PARTIDA", 8, 335);
+        ctx.drawImage(teclaEnter,5,340,60,60);
+
+        ctx.fillText("CONTROLS", 0, 220);
+        ctx.drawImage(movimientos,10,230,60,60);
+
 
         ctx.drawImage(fondoMap, canvas.width, canvas.height, 100, 100);
         if(playerDirection){
@@ -433,7 +436,7 @@ function paint() {
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 25);
             ctx.fillText(scoreTop, 220, 25);
             ctx.fillText("Tiempo:", 5, 480);
-            ctx.fillText(tiempoRestante, 90, 480);
+            ctx.fillText(tiempoRestante + "s", 90, 480);
             ctx.drawImage(imageGioDerecha, 240, 290, 150, 150);
 
         }
@@ -449,7 +452,7 @@ function paint() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(missionComplete, 180, 100, 300, 300);
             ctx.fillStyle = "rgb(255, 228, 0)";
-            ctx.fillText("REINICIAR [E]", 10, 480);
+            ctx.fillText("REINICIAR [Q]", 10, 480);
             ctx.fillText("V I D A S: ", 170, 480);
             ctx.fillText(vidas, 270, 480);
             ctx.fillText("S C O R E: ", 300, 480);
@@ -458,8 +461,7 @@ function paint() {
             ctx.fillText(scoreTop, 210, 25);
             ctx.drawImage(imageGioDerecha, 240, 300, 150, 150);  
             ctx.fillText("Tiempo:", 450, 480);
-            ctx.fillText(tiempoRestante, 540, 480);
-            reinicioWin = false;
+            ctx.fillText(tiempoRestante + "s", 540, 480);
         }
 
         if(missionFailed){
@@ -480,8 +482,9 @@ function paint() {
             ctx.fillText("PUNTUACIÓN TOP: ", 10, 30);
             ctx.fillText(scoreTop, 305, 25);
             ctx.fillText("Tiempo:", 5, 480);
-            ctx.fillText(tiempoRestante, 125, 480);
+            ctx.fillText(tiempoRestante + "s", 125, 480);
         }
+        
 }
 
 cargarEstadoJuego();
@@ -496,7 +499,7 @@ function guardarEstadoJuego() {
     const estadoJuego = {
         score: score,
         scoreTop: scoreTop,
-        tiempoTop: tiempoTop,
+        lastScore: lastScore
     };
     localStorage.setItem('estadoJuego', JSON.stringify(estadoJuego));
 }
@@ -514,19 +517,18 @@ window.addEventListener('beforeunload', guardarEstadoJuego);
 
 function reiniciarJuego() {
     score = 0;
-    vidas = 1;
+    vidas = 2;
     player.x = 85;
     player.y = 465;
     p = true;
     a= true;
     soundrackPlay = true;
     gameOver = true;
-    reinicioWin = true;
     missionFailed = false;
     winScore = false;
-    mission = false;
     vidasAceptadas = false;
     tiempoRestante = 0;
+    mission = false;
     guardarEstadoJuego();
 }
 
@@ -540,11 +542,10 @@ function actualizarTemporizador() {
     if(winScore){
         clearInterval(intervalID);
     }else{
-        if(!pause && mission == false && !missionFailed){
+        if(!pause && !missionFailed && !mission){
             tiempoRestante++;
             if (tiempoRestante >= 0) {
                 dibujarTiempo();
-                tiempoTop = dibujarTiempo();
               } 
         }
     }
