@@ -13,7 +13,7 @@ else if(songRandom == 2){
     soundrack.src = "soundrack3.mp3";
 }
 
-import { helicopterDer,helicopterIzq,alien, avionIzq,
+import { fondoPause,helicopterDer,helicopterIzq,alien, avionIzq,
     avionDer, teclaSpace,
     teclaEnter, movimientos,
     fondoMap, imageGioDerecha,
@@ -357,7 +357,8 @@ function update() {
         // Verificar colisión con los obstaculos
         for (var i = walls.length - 1; i >= 0; i--) {
 
-            if (player.seTocan(walls[i]) || player.seTocan(targetTank) || player.seTocan(targetAlien)) {
+            if (player.seTocan(walls[i]) || player.seTocan(targetTank) || player.seTocan(targetAlien)
+            || player.seTocan(targetHelicopter) || player.seTocan(targetAvion)) {
                 vidas = vidas - 1;
                 audioScream.play();
                 player.x = 85;
@@ -382,7 +383,7 @@ function update() {
             }
 
             if (direccion == 3) {
-                if (walls[i].x > 1100) {
+                if (walls[i].x > 1150) {
                     direccion = 4;
                 } else {
                     walls[i].x += speedSerpi;
@@ -527,8 +528,9 @@ function paint() {
             paredes[i].paint(ctx);
         }
         if (pause) {
+            ctx.drawImage(fondoPause,0,0,canvas.width,canvas.height);
             ctx.font = "20px Georgia";
-            ctx.fillStyle = "black";
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "rgb(255, 228, 0)";
             ctx.fillText("P A U S E [ENTER]", 425, 170);

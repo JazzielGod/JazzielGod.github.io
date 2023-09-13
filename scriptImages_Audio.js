@@ -1,11 +1,12 @@
 
+export const fondoPause = new Image();
+fondoPause.src = "fondoPause.jpeg";
 
 export const helicopterDer = new Image();
 helicopterDer.src = "helicopterDer.png";
 
 export const helicopterIzq = new Image();
 helicopterIzq.src = "helicopterIzq.jpeg";
-
 
 export const alien = new Image();
 alien.src = "alien.gif";
