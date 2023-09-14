@@ -26,7 +26,8 @@ import { missionCompleteFondo,fondoPause,helicopterDer,helicopterIzq,alien, avio
     tank,
     tank2 } from './scriptImages_Audio.js';
 
-var direccionAlien = 1;
+var cambioLugarAlien = false;
+var direccionAlien = randomInteger(1,2);
 var direccionAvion = 3;
 var ladoAvion = true;
 var ladoTank = true;
@@ -50,6 +51,7 @@ var direccionTank = 3;
 var speedTank = 3;
 var speedAvion = 4;
 var direccionHelicopter = 3;
+var conteo = 0;
 
 var soundrackPlay = true;
 var h = 50;
@@ -298,13 +300,34 @@ function update() {
         //direccion de alien y verificacion de colision con paredes
         for (var i = paredes.length - 1; i >= 0; i--) {
             if ( targetAlien.seTocan(paredes[i])) {
-                if(direccionAlien == 1){
-                     direccionAlien = 2;
-               }else if(direccionAlien == 2){
-                    direccionAlien = 1; 
-               }
+                conteo = conteo + 1;
+                if (direccionAlien == 1) {
+                    direccionAlien = 2;
+                } else if (direccionAlien == 2) {
+                    direccionAlien = 1;
+                } else if (direccionAlien == 3) {
+                    direccionAlien = 4;
+                } else if (direccionAlien == 4) {
+                    direccionAlien = 2;
+                }            
+                if(conteo > 5 && !cambioLugarAlien){
+                    conteo = 0;
+                    cambioLugarAlien = true;
+                    targetAlien.x = 350;
+                    targetAlien.y = 205;
+                    direccionAlien = randomInteger(1,4);
+                }if(conteo > 10 && cambioLugarAlien){
+                    conteo = 0;
+                    cambioLugarAlien = false;
+                    targetAlien.x = 126;
+                    targetAlien.y = 50;
+                    direccionAlien = 1;
+                }
+                
             }
         }
+
+       
 
         if (direccionAlien == 1) {
             if (targetAlien.y < 0) {           
@@ -320,6 +343,24 @@ function update() {
             } else {
                 targetAlien.y += speedAlien;
 
+            }
+        }
+
+        if (direccionAlien == 3) {
+
+            if (targetAlien.x < 0) {
+                targetAlien.x = 1000;
+            } else {
+                targetAlien.x += speedAlien;
+            }
+        }
+        
+        if (direccionAlien == 4) {
+
+            if (targetAlien.x > 1000) {
+                targetAlien.x = 0;
+            } else {
+                targetAlien.x -= speedAlien;
             }
         }
         //Direccion helicoptero y verificacion de colisiones
@@ -667,6 +708,5 @@ function actualizarTemporizador() {
   }
   var intervalID = setInterval(actualizarTemporizador, intervalo);
   dibujarTiempo();
-
 
 update();
