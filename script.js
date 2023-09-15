@@ -247,7 +247,21 @@ function update() {
 
             }
         }
-
+        //space para pausar jugador
+        if (gioPause) {
+            if (dir == 1) {
+                player.y += speedPlayer;
+            }
+            if (dir == 2) {
+                player.y -= speedPlayer;
+            }
+            if (dir == 3) {
+                player.x -= speedPlayer;
+            }
+            if (dir == 4) {
+                player.x += speedPlayer;
+            }
+        }
         if (direccionTank == 3) {
             if (targetTank.x > 900) {
                 ladoTank = false;
@@ -442,21 +456,6 @@ function update() {
         }
     }
 
-    //space para pausar jugador
-    if (gioPause) {
-        if (dir == 1) {
-            player.y += speedPlayer;
-        }
-        if (dir == 2) {
-            player.y -= speedPlayer;
-        }
-        if (dir == 3) {
-            player.x -= speedPlayer;
-        }
-        if (dir == 4) {
-            player.x += speedPlayer;
-        }
-    }
 
     if (player.seTocan(target)) {
         target.x = randomInteger(85, 500);
